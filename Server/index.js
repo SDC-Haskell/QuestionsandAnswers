@@ -1,6 +1,7 @@
 const express = require('express');
 const xpressHandlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
+const db = require('../DB/get.js');
 const path = require('path');
 //const models = require('../Models');
 // const { Sequelize } = require('sequelize');
@@ -43,12 +44,28 @@ app.get('/qa/questions', ((req,res) => {
 
 }));
 
+/*
+  QuestionID's for testing:
+  60042 - 60048
+*/
 app.get('/qa/questions/:question_id/answers', ((req,res) => {
-  console.log(req.params);
-  res.send(req.params);
+  /*
+    Currently we haven't handled the query params for this route
+
+    You have the option for page and count the same way you do above
+  */
+  db.getAnswers(req.params.question_id, (err, data) => {
+    if(err) {
+      // refactor this to send a 404 later.
+      res.send(err);
+      return;
+    }
+    res.send(data);
+  });
+  console.log(req.params.question_id);
+  // res.send(req.params);
 }));
 
-// Testing our database
 // sudo kill -9 `sudo lsof -t -i:5000`
 
 //models.sequelize.sync().then(() => {
