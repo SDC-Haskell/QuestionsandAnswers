@@ -24,6 +24,7 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
+app.use(express.json());
 
 app.get('/', (req, res) => res.send('Hello there'));
 
@@ -64,6 +65,11 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
   });
   console.log(req.params.question_id);
   // res.send(req.params);
+}));
+
+app.post('/qa/questions', ((req, res) => {
+  //console.log(req);
+  res.send(req.body);
 }));
 
 // sudo kill -9 `sudo lsof -t -i:5000`

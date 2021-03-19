@@ -12,43 +12,62 @@ const client = new pg.Client({
 client.connect();
 
 const getAnswers = (params, callback) => {
-  client.query(`select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(ph.url)) FROM answerphotos ph LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id} GROUP BY ans.id, ph.id;`, (err, data) => {
+  client.query(`select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
+                FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=279 GROUP BY ph.id) ph
+                LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id}
+                GROUP BY ans.id;`, (err, data) => {
                     if (err) {
                       console.log(err);
                       callback(err, null);
-                      return
+                      return;
                     }
                     callback(null, data);
                   });
 
-  // select ph.id, ph.url, array_agg(ph.url) FROM answerphotos ph INNER JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${params.questionID} GROUP BY ph.id, ph.url;
-  // client.query(`select * from answers where question_id=${params.questionID};`, (err, data) => {
-  //   if (err) {
-  //     console.log(err);
-  //     callback(err, null);
-  //     return;
-  //   }
-  //   /*
-  //     Now we have to structure our output object so that it is the same as the route.
+/*
+  old Query:
+  `select ans.id, ans.body, ans.date_written,
+              ans.answerer_name, ans.helpful, (array_agg(ph.url))
+              FROM answerphotos ph LEFT JOIN answers ans
+              on ans.id = ph.answer_id where ans.question_id=${params.question_id}
+              GROUP BY ans.id, ph.id;`
+*/
 
-  //     This is going to involve chaining a request to teh photos table
+/*
+`select ans.id, ans.body, ans.date_written,
+ans.answerer_name, ans.helpful, (array_agg(ph.url))
+FROM answerphotos ph LEFT JOIN answers ans
+on ans.id = ph.answer_id where ans.question_id=${params.question_id}
+GROUP BY ans.id, ph.id;`
+/*
 
-  //   */
+*/
 
-  //   // let formattedData = {
-  //   //   question: params.questionID,
-  //   //   page: params.page,
-  //   //   count: params.count,
+/*
+  new Query:
+  `select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
+                FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id GROUP BY ph.id) ph
+                LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=279
+                GROUP BY ans.id;`
+  */
 
-  //   // };
-  //   // data.rows contains all of our data.
-  //   callback(null, data);
-  // });
+ /*
+    `select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
+                FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=279 GROUP BY ph.id) ph
+                LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=279
+                GROUP BY ans.id;`
+ */
+ /*
+   select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
+    FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph GROUP BY ph.id) ph
+                LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=279
+                GROUP BY ans.id;
+ */
 };
+
+
 
 
 module.exports = {
   getAnswers,
 };
-
-'select ,'
