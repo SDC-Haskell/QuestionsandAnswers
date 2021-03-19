@@ -54,7 +54,7 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
 
     You have the option for page and count the same way you do above
   */
-  db.getAnswers(req.params.question_id, (err, data) => {
+  db.getAnswers(req.params, (err, data) => {
     if(err) {
       // refactor this to send a 404 later.
       res.send(err);
