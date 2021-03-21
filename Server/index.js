@@ -69,9 +69,50 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
 
 app.post('/qa/questions', ((req, res) => {
   //console.log(req);
-  res.send(req.body);
+  db.addQuestion(req.body, (err, data) => {
+    if(err) {
+      res.send(err);
+      console.log(err);
+      return;
+    }
+    res.send(data);
+  });
+}));
+app.post('/qa/questions/:question_id/answers', ((req, res) => {
+  db.addAnswer(req, (err, data) => {
+    if(err) {
+      res.send(err);
+      return;
+    }
+    res.send(data);
+  });
+  /*
+    body.body(text)
+    body.name
+    body.email
+    body.photos
+    req.params.blah
+
+    (we're just going to send teh entire request to our function)
+  */
 }));
 
+
+app.put('/qa/questions/:question_id/helpful', ((req, res) => {
+  res.send(req.params);
+}));
+
+app.put('/qa/questions/:question_id/report', ((req, res) => {
+  res.send(req.params);
+}));
+
+app.put('/qa/answers/:answer_id/helpful', ((req, res) => {
+  res.send(req.params);
+}));
+
+app.put('/qa/answers/:answer_id/report', ((req, res) => {
+  res.send(req.params);
+}));
 // sudo kill -9 `sudo lsof -t -i:5000`
 
 //models.sequelize.sync().then(() => {
