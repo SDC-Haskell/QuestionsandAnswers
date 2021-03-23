@@ -29,20 +29,15 @@ app.use(express.json());
 app.get('/', (req, res) => res.send('Hello there'));
 
 app.get('/qa/questions', ((req,res) => {
-  /*
-    Gets a specific product ID from the database and returns
-    the questions object containing all of the answers for each question (and photos)
 
-    The number of questions (and pages of questions) returned are specified by the page and count query params
-
-    This is going to require multiple layers of queries
-
-    current productid = 17072
-  */
-  console.log(req.query);
-
-  res.send(req.query.product_id);
-
+  db.getQuestions(req.query.product_id, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.send(err);
+      return;
+    }
+    res.send(data);
+  });
 }));
 
 /*
@@ -80,7 +75,7 @@ app.post('/qa/questions', ((req, res) => {
 }));
 app.post('/qa/questions/:question_id/answers', ((req, res) => {
   db.addAnswer(req, (err, data) => {
-    if(err) {
+    if (err) {
       res.send(err);
       return;
     }
@@ -99,19 +94,43 @@ app.post('/qa/questions/:question_id/answers', ((req, res) => {
 
 
 app.put('/qa/questions/:question_id/helpful', ((req, res) => {
-  res.send(req.params);
+  db.markQuestionHelpful(req.params.question_id, (err, data) => {
+    if (err) {
+      res.send(err);
+      return;
+    }
+    res.send(data);
+  });
 }));
 
 app.put('/qa/questions/:question_id/report', ((req, res) => {
-  res.send(req.params);
+  db.reportQuestion(req.params.question_id, (err, data) => {
+    if (err) {
+      res.send(err);
+      return;
+    }
+    res.send(data);
+  });
 }));
 
 app.put('/qa/answers/:answer_id/helpful', ((req, res) => {
-  res.send(req.params);
+  db.markAnswerHelpful(req.params.question_id, (err, data) => {
+    if (err) {
+      res.send(err);
+      return;
+    }
+    res.send(data);
+  });
 }));
 
 app.put('/qa/answers/:answer_id/report', ((req, res) => {
-  res.send(req.params);
+  db.reportAnswer(req.params.question_id, (err, data) => {
+    if (err) {
+      res.send(err);
+      return;
+    }
+    res.send(data);
+  });
 }));
 // sudo kill -9 `sudo lsof -t -i:5000`
 
