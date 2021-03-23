@@ -23,6 +23,9 @@ const getQuestions = (product_id, callback) => {
                     results: data.rows,
                   }
                   callback(null, dataObj);
+                  // for (let product of dataObj.results) {
+                  //   client.query()
+                  // }
                 });
 };
 
