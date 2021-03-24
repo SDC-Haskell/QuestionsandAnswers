@@ -22,10 +22,36 @@ const getQuestions = (product_id, callback) => {
                     [product_id]: product_id,
                     results: data.rows,
                   }
-                  callback(null, dataObj);
-                  // for (let product of dataObj.results) {
-                  //   client.query()
-                  // }
+                  //callback(null, dataObj);
+                  for (let product of dataObj.results) {
+                    console.log('question id: ' + product);
+                    client.query(`select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
+                    FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=${product.id} GROUP BY ph.id) ph
+                    LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${product.id}
+                    GROUP BY ans.id;`, (err, data) => {
+                      if (err) {
+                        callback(err, null);
+                        return;
+                      }
+                      console.log('made it: ' + data);
+                      // product.answers = data.rows[0];
+                      product.answers = {};
+                      for (let answer of data.rows) {
+                        console.log('l');
+                        product.answers[answer.id] = {
+                            id: answer.id,
+                            body: answer.body,
+                            date: answer.date_written,
+                            answrer_name: answer.answerer_name,
+                            helpfullness: answer.helpful,
+                            photos: answer.array_agg,
+                        };
+                      }
+                      if (dataObj.results.indexOf(product) === dataObj.results.length - 1) {
+                        callback(null, dataObj);
+                      }
+                    });
+                  }
                 });
 };
 
@@ -39,36 +65,31 @@ const getAnswers = (params, callback) => {
                       callback(err, null);
                       return;
                     }
-                    callback(null, data);
+                    // console.log(data.rows);
+                    let returnObj = {
+                      question: params.question_id,
+                      page: params.page,
+                      count: params.count,
+                      results: data.rows,
+                    };
+                    console.log('return Obj: ' + returnObj.results);
+                    for (let i = 0; i < returnObj.results.length; i++) {
+                      console.log('looping');
+                      returnObj.results[i] = {
+                        answer_id: returnObj.results[i].id,
+                        body: returnObj.results[i].body,
+                        date: returnObj.results[i].date,
+                        answerer_name: returnObj.results[i].answerer_name,
+                        helpfulness: returnObj.results[i].helpful,
+                        photos: returnObj.results[i].array_agg,
+                      };
+                    };
+                    callback(null, returnObj);
                   });
-
-/*
-  old Query:
-  `select ans.id, ans.body, ans.date_written,
-              ans.answerer_name, ans.helpful, (array_agg(ph.url))
-              FROM answerphotos ph LEFT JOIN answers ans
-              on ans.id = ph.answer_id where ans.question_id=${params.question_id}
-              GROUP BY ans.id, ph.id;`
-*/
-
-/*
-  new Query:
-  `select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
-                FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=279 GROUP BY ph.id) ph
-                LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id}
-                GROUP BY ans.id;`
-*/
 };
 
 
 /*
-  select q.id, q.product_id, q.body, q.date_written, q.asker_name, q.helpful, q.reported, json_agg(json_build_object(thereAreBillionsofStars)) from (select ans.id, ans.question_id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj)) FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=287 GROUP BY ph.id) ph LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=287 GROUP BY ans.id) as thereAreBillionsofStars left join questions q on q.id = thereAreBillionsofStars.question_id where q.product_id=287 group by q.id;
-
-
-  select q.id, q.product_id, q.body, q.date_written, q.asker_name, q.helpful, q.reported, json_build_object(v) from (select ans.id, ans.question_id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj)) AS v FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=287 GROUP BY ph.id) ph LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=287 GROUP BY ans.id) v left join questions q on q.id = v.question_id where q.product_id=287 group by q.id, v.question_id;
-
-
-  select q.id, q.product_id, q.body, q.date_written, q.asker_name, q.helpful, q.reported, json_agg(q) from (select ans.id, ans.question_id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj)) as q FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ph.id) ph LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ans.id) as v left join questions q on q.id = v.question_id where q.product_id=287 group by q.id, v.question_id;
 
   select q.id, q.product_id, q.body, q.date_written, q.asker_name, q.helpful, q.reported, json_agg(q) from (select ans.id, ans.question_id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj)) as q FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ph.id) ph LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ans.id) as v left join questions q on q.id = v.question_id where q.product_id=278 group by q.id, v.question_id;
 

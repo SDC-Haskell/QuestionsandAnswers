@@ -38,3 +38,7 @@ CREATE TABLE answerphotos (
 COPY questions FROM '/home/n/Desktop/questions.csv' DELIMITER ',' CSV HEADER;
 COPY answers FROM '/home/n/Desktop/answers.csv' DELIMITER ',' CSV HEADER;
 COPY answerphotos FROM '/home/n/Desktop/answers_photos.csv' DELIMITER ',' CSV HEADER;
+
+Create index answer_id_idx on answerphotos (answer_id);
+create index question_id_idx on answers (question_id);
+create index product_id_idx on questions (product_id);
