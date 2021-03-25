@@ -56,6 +56,7 @@ const getQuestions = (product_id, callback) => {
 };
 
 const getAnswers = (params, callback) => {
+  console.log('hello from query');
   client.query(`select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
   FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj
   FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id} GROUP BY ph.id) ph
@@ -112,7 +113,7 @@ const addAnswer = (req, callback) => {
   let date = new Date(Date.now());
   date = date.toISOString();
   dateTime = date.split('T');
-  // console.log(req.body);
+  console.log(req.body);
   client.query(`SELECT setval('answers_id_seq',
                 (SELECT MAX(id) FROM answers)+1);
                 INSERT INTO answers (question_id, body, date_written,
@@ -130,7 +131,7 @@ const addAnswer = (req, callback) => {
                     callback(null, 'successful no photos post');
                     return;
                   }
-                  for (const url in req.body.photos) {
+                  for (const url of req.body.photos) {
                     client.query(`SELECT setval
                                   ('answerphotos_id_seq',
                                   (SELECT MAX(id) FROM answerphotos)+1);
