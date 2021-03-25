@@ -3,22 +3,7 @@ const xpressHandlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const db = require('../DB/get.js');
 const path = require('path');
-//const models = require('../Models');
-// const { Sequelize } = require('sequelize');
 
-// let authenticate = async function() {
-
-//   // db.query('CREATE DATABASE QandA', function(err) {
-//   //   var sequelize = new Sequelize(post)
-//   // })
-//   try {
-//     await models.sequelize.authenticate();
-//     console.log('Connection was established successfully');
-//   } catch (error) {
-//     console.log('Failure to connect to database: ' + error);
-//   }
-// }
-// authenticate();
 
 const PORT = process.env.PORT || 5000;
 
@@ -59,11 +44,9 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
     res.send(data);
   });
   console.log(req.params.question_id);
-  // res.send(req.params);
 }));
 
-app.post('/qa/questions', ((req, res) => {
-  //console.log(req);
+app.post('/qa/questions', (req, res => {
   db.addQuestion(req.body, (err, data) => {
     if(err) {
       res.send(err);

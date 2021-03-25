@@ -1,11 +1,11 @@
 const pg = require('pg');
 
-// const cs = 'postgres://postgres:user@localhost:myPassword/';
+// postgres:user@localhost:myPassword/';
 
 const client = new pg.Client({
-  user: 'postgres',
+  user: 'ubuntu',
   password: 'myPassword',
-  host: 'localhost',
+  host: '54.153.9.229',
   database: 'qanda',
 });
 
@@ -57,7 +57,8 @@ const getQuestions = (product_id, callback) => {
 
 const getAnswers = (params, callback) => {
   client.query(`select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
-  FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id} GROUP BY ph.id) ph
+  FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj
+  FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id} GROUP BY ph.id) ph
   LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id}
   GROUP BY ans.id;`, (err, data) => {
                     if (err) {
@@ -87,21 +88,6 @@ const getAnswers = (params, callback) => {
                     callback(null, returnObj);
                   });
 };
-
-
-/*
-
-  select q.id, q.product_id, q.body, q.date_written, q.asker_name, q.helpful, q.reported, json_agg(q) from (select ans.id, ans.question_id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj)) as q FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ph.id) ph LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ans.id) as v left join questions q on q.id = v.question_id where q.product_id=278 group by q.id, v.question_id;
-
-  select q.id, q.product_id, q.body, q.date_written, q.asker_name, q.helpful, q.reported, json_agg(q) from (select ans.id, ans.question_id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj)) as q FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ph.id) ph LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=q.id GROUP BY ans.id) as v left join questions q on q.id = v.question_id where q.product_id=278 group by q.id, v.question_id;
-*/
-/*
- currently we have
- 1. body
- 2. name
- 3. product_id
- 4. email
-*/
 const addQuestion = (body, callback) => {
   let date = new Date(Date.now());
   date = date.toISOString();
@@ -218,16 +204,7 @@ const reportAnswer = (questionID, callback) => {
                 callback(null, data);
                 });
 };
-/*
-  select * from questions where product_id=279;
-*/
-/*
- SELECT setval('questions_id_seq', (SELECT MAX(id) FROM questions)+1);
- insert into questions (product_id, body, date_written, asker_name, asker_email, reported, helpful) values (279, 'How many licks does it take to get to the center of a tootsie pop?', '2021-03-17', 'theGorrglyboose', 'mooMaster9000@hotmail.com', 0, 0);
 
-
- UPDATE questions set helpful=helpful+1 where id=279;
-*/
 module.exports = {
   getQuestions,
   getAnswers,
@@ -236,5 +213,5 @@ module.exports = {
   markQuestionHelpful,
   reportQuestion,
   reportAnswer,
-  markAnswerHelpful
+  markAnswerHelpful,
 };
