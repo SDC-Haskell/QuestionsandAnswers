@@ -46,7 +46,7 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
   console.log(req.params.question_id);
 }));
 
-app.post('/qa/questions', (req, res => {
+app.post('/qa/questions', ((req, res) => {
   db.addQuestion(req.body, (err, data) => {
     if(err) {
       res.send(err);
