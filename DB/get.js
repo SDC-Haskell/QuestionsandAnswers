@@ -7,6 +7,7 @@ const client = new pg.Client({
   password: 'myPassword',
   host: '54.153.9.229',
   database: 'qanda',
+  port: 5432,
 });
 
 client.connect();
