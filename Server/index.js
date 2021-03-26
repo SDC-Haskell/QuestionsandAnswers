@@ -25,7 +25,7 @@ app.get('/qa/questions', ((req,res) => {
   });
 }));
 
-app.get('loaderio-89a175b4131c64a107c303c2c8e5b969.txt', (req, res) => res.send('loaderio-89a175b4131c64a107c303c2c8e5b969'))
+app.get('/loaderio-89a175b4131c64a107c303c2c8e5b969.txt', (req, res) => res.send('loaderio-89a175b4131c64a107c303c2c8e5b969'));
 /*
   QuestionID's for testing:
   60042 - 60048
