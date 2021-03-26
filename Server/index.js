@@ -3,6 +3,7 @@ const xpressHandlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const db = require('../DB/get.js');
 const path = require('path');
+// const loader = require('../')
 
 
 const PORT = process.env.PORT || 5000;
@@ -25,7 +26,9 @@ app.get('/qa/questions', ((req,res) => {
   });
 }));
 
-app.get('/loaderio-89a175b4131c64a107c303c2c8e5b969', (req, res) => res.send('loaderio-89a175b4131c64a107c303c2c8e5b969'));
+app.get('/loaderio-89a175b4131c64a107c303c2c8e5b969', (req, res) => {
+  res.send('loaderio-89a175b4131c64a107c303c2c8e5b969')
+  });
 /*
   QuestionID's for testing:
   60042 - 60048
