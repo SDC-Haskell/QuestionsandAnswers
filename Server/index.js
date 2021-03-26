@@ -18,7 +18,7 @@ app.get('/qa/questions', ((req,res) => {
 
   db.getQuestions(req.query.product_id, (err, data) => {
     if (err) {
-      console.log(err);
+      // console.log(err);
       res.send(err);
       return;
     }
@@ -39,7 +39,7 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
 
     You have the option for page and count the same way you do above
   */
-  console.log('Yolo');
+  // console.log('Yolo');
   db.getAnswers(req.params, (err, data) => {
     if(err) {
       // refactor this to send a 404 later.
@@ -48,7 +48,7 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
     }
     res.send(data);
   });
-  console.log(req.params.question_id);
+  // console.log(req.params.question_id);
 }));
 
 app.post('/qa/questions', ((req, res) => {

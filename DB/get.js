@@ -13,7 +13,6 @@ const client = new pg.Client({
 client.connect();
 
 const getQuestions = (product_id, callback) => {
-  console.log(product_id);
   client.query(`select * from questions where product_id=${product_id};`, (err, data) => {
                   if (err) {
                     callback(err, null);
@@ -25,7 +24,6 @@ const getQuestions = (product_id, callback) => {
                   }
                   //callback(null, dataObj);
                   for (let product of dataObj.results) {
-                    console.log('question id: ' + product);
                     client.query(`select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
                     FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=${product.id} GROUP BY ph.id) ph
                     LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${product.id}
@@ -34,7 +32,6 @@ const getQuestions = (product_id, callback) => {
                         callback(err, null);
                         return;
                       }
-                      console.log('made it: ' + data);
                       // product.answers = data.rows[0];
                       product.answers = {};
                       for (let answer of data.rows) {
@@ -57,18 +54,15 @@ const getQuestions = (product_id, callback) => {
 };
 
 const getAnswers = (params, callback) => {
-  console.log('hello from query');
   client.query(`select ans.id, ans.body, ans.date_written, ans.answerer_name, ans.helpful, (array_agg(myObj))
   FROM (SELECT ph.answer_id, json_object_agg(ph.id, ph.url) AS myObj
   FROM answerphotos ph left join answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id} GROUP BY ph.id) ph
   LEFT JOIN answers ans on ans.id = ph.answer_id where ans.question_id=${params.question_id}
   GROUP BY ans.id;`, (err, data) => {
                     if (err) {
-                      console.log(err);
                       callback(err, null);
                       return;
                     }
-                    // console.log(data.rows);
                     let returnObj = {
                       question: params.question_id,
                       page: params.page,
@@ -77,7 +71,6 @@ const getAnswers = (params, callback) => {
                     };
                     console.log('return Obj: ' + returnObj.results);
                     for (let i = 0; i < returnObj.results.length; i++) {
-                      console.log('looping');
                       returnObj.results[i] = {
                         answer_id: returnObj.results[i].id,
                         body: returnObj.results[i].body,
@@ -103,7 +96,6 @@ const addQuestion = (body, callback) => {
                 '${dateTime[0]}', '${body.name}', '${body.email}', 0, 0);`,
                 (err, data) => {
                   if(err) {
-                    console.log(err);
                     callback(err, null);
                     return;
                   }
@@ -123,7 +115,6 @@ const addAnswer = (req, callback) => {
                 values (${req.params.question_id}, '${req.body.body}',
                 '${dateTime[0]}', '${req.body.name}', '${req.body.email}', 0, 0);`, (err, data) => {
                   if (err) {
-                    console.log(err + 'firsterr');
                     callback(err, null);
                     return;
                   }
@@ -141,7 +132,6 @@ const addAnswer = (req, callback) => {
                                   values (${answerID}, ${url})`,
                                   (err, data) => {
                                     if(err) {
-                                      console.log(err);
                                       callback(err, null);
                                       return;
                                     }
