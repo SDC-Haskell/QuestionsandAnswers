@@ -25,6 +25,7 @@ app.get('/qa/questions', ((req,res) => {
   });
 }));
 
+app.get('loaderio-89a175b4131c64a107c303c2c8e5b969.txt', (req, res) => res.send('loaderio-89a175b4131c64a107c303c2c8e5b969'))
 /*
   QuestionID's for testing:
   60042 - 60048
@@ -35,6 +36,7 @@ app.get('/qa/questions/:question_id/answers', ((req,res) => {
 
     You have the option for page and count the same way you do above
   */
+  console.log('Yolo');
   db.getAnswers(req.params, (err, data) => {
     if(err) {
       // refactor this to send a 404 later.
