@@ -69,7 +69,6 @@ const getAnswers = (params, callback) => {
                       count: params.count,
                       results: data.rows,
                     };
-                    console.log('return Obj: ' + returnObj.results);
                     for (let i = 0; i < returnObj.results.length; i++) {
                       returnObj.results[i] = {
                         answer_id: returnObj.results[i].id,
