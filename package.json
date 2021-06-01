@@ -1,0 +1,41 @@
+{
+  "name": "sdc",
+  "version": "1.0.0",
+  "description": "sdc Package.json",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon Server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Symbuh/QuestionsandAnswers.git"
+  },
+  "keywords": [
+    "FEC"
+  ],
+  "author": "Nick Sabadicci",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Symbuh/QuestionsandAnswers/issues"
+  },
+  "homepage": "https://github.com/Symbuh/QuestionsandAnswers#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.1",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.5.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "nodemon": "^2.0.7",
+    "postgres": "^1.0.2",
+    "prettier": "^2.2.1"
+  }
+}
